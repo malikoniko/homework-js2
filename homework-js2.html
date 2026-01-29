@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Malika's Profile 🎀</title>
+  <style>
+   
+    :root {
+      --bg-color: #fff0f5;
+      --dot-color: #ffc0cb;
+      --card-bg: #ffffff;
+      --text-color: #776e65;
+      --accent: #d87093;
+      --secondary: #ffb6c1;
+    }
+
+    
+    body.dark-mode {
+      --bg-color: #1a1a1a;
+      --dot-color: #332228; 
+      --card-bg: #252525;
+      --text-color: #e0e0e0;
+      --accent: #ff69b4;
+      --secondary: #4a2c3a;
+    }
+
+    body { 
+      font-family: 'Georgia', serif; 
+      background-color: var(--bg-color);
+      background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+      background-size: 30px 30px;
+      color: var(--text-color);
+      transition: background 0.5s ease, color 0.5s ease;
+      margin: 0;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .container { max-width: 700px; margin: 0 auto; }
+
+   
+    .theme-toggle {
+      position: fixed; top: 20px; right: 20px;
+      background: var(--card-bg);
+      border: 2px solid var(--accent);
+      border-radius: 50%; width: 50px; height: 50px;
+      cursor: pointer; font-size: 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    .theme-toggle:hover { transform: rotate(15deg) scale(1.1); }
+
+    
+    main {
+      background: var(--card-bg);
+      border-radius: 40px;
+      padding: 40px;
+      border: 2px solid var(--dot-color);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    h1, h2, h3 { color: var(--accent); text-align: center; }
+
+    
+    #todo-list { list-style: none; padding: 0; margin-top: 20px; }
+    #todo-list li {
+      background: var(--bg-color);
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--dot-color);
+      transition: 0.3s;
+    }
+
+    .wish-text { cursor: pointer; flex: 1; margin: 0 10px; }
+    .wish-text.completed { text-decoration: line-through; opacity: 0.5; }
+
+    input[type="checkbox"] { accent-color: var(--accent); cursor: pointer; width: 18px; height: 18px; }
+
+    
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background: var(--bg-color);
+      padding: 30px;
+      border-radius: 30px;
+      border: 2px dashed var(--accent);
+      margin-top: 30px;
+    }
+
+    input, textarea {
+      padding: 15px;
+      border-radius: 15px;
+      border: 1px solid var(--dot-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-family: inherit;
+      outline: none;
+    }
+    input:focus { border-color: var(--accent); }
+
+    .btn-pink {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(216, 112, 147, 0.3);
+      transition: 0.3s;
+    }
+    .btn-pink:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+    
+    .sparkle {
+      position: fixed;
+      pointer-events: none;
+      font-size: 24px;
+      animation: fly 0.8s ease-out forwards;
+      z-index: 9999;
+    }
+    @keyframes fly {
+      0% { transform: scale(0) rotate(0); opacity: 1; }
+      100% { transform: scale(1.5) rotate(360deg) translateY(-50px); opacity: 0; }
+    }
+
+    .counter { font-size: 14px; text-align: center; opacity: 0.7; margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" id="themeBtn">🌙</button>
+
+  <div class="container">
+    <main>
+      <div class="counter" id="counter">Добро пожаловать 🎀</div>
+      <h1>Malika's Profile ✨</h1>
+      
+      <section>
+        <h3>Мои желания (Wishlist) 🌸</h3>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="todoInput" placeholder="Новая мечта..." style="flex: 1;">
+          <button class="btn-pink" id="addBtn">✨</button>
+        </div>
+        <ul id="todo-list"></ul>
+      </section>
+
+      <section id="contact">
+        <h3>Связаться со мной 💌</h3>
+        <form class="contact-form" id="contactForm">
+          <input type="text" id="userName" placeholder="Твоё имя..." required>
+          <input type="email" id="userEmail" placeholder="Твоя почта..." required>
+          <textarea id="userMsg" rows="3" placeholder="Милое сообщение..."></textarea>
+          <button type="submit" class="btn-pink">Отправить 💖</button>
+        </form>
+        <p id="formStatus" style="text-align:center; font-size: 14px;"></p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+   
+    const themeBtn = document.getElementById('themeBtn');
+    themeBtn.onclick = () => {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      themeBtn.innerText = isDark ? '☀️' : '🌙';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    };
+    if(localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      themeBtn.innerText = '☀️';
+    }
+
+    
+    let visits = localStorage.getItem('visitCount') || 0;
+    visits++;
+    localStorage.setItem('visitCount', visits);
+    document.getElementById('counter').innerText = `Твой визит №${visits} 🎀`;
+
+    
+    const todoInput = document.getElementById('todoInput');
+    const todoList = document.getElementById('todo-list');
+    let wishes = JSON.parse(localStorage.getItem('wishes')) || [];
+
+    function createSparkle(x, y) {
+      for(let i=0; i<6; i++) {
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        s.innerText = ['✨','💖','🎀','🌸'][Math.floor(Math.random()*4)];
+        s.style.left = x + (Math.random()*40 - 20) + 'px';
+        s.style.top = y + (Math.random()*40 - 20) + 'px';
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 800);
+      }
+    }
+
+    function render() {
+      todoList.innerHTML = '';
+      wishes.forEach((w, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <input type="checkbox" onclick="completeTask(event)">
+          <span class="wish-text" onclick="editTask(${i})">${w}</span>
+          <span style="cursor:pointer" onclick="removeTask(event, ${i})">✕</span>
+        `;
+        todoList.appendChild(li);
+      });
+      localStorage.setItem('wishes', JSON.stringify(wishes));
+    }
+
+    document.getElementById('addBtn').onclick = () => {
+      if(todoInput.value) {
+        wishes.push(todoInput.value);
+        todoInput.value = '';
+        render();
+      }
+    };
+
+    window.removeTask = (e, i) => {
+      createSparkle(e.clientX, e.clientY);
+      wishes.splice(i, 1);
+      render();
+    };
+
+    window.editTask = (i) => {
+      const val = prompt("Редактировать мечту:", wishes[i]);
+      if(val) { wishes[i] = val; render(); }
+    };
+
+    window.completeTask = (e) => {
+      e.target.nextElementSibling.classList.toggle('completed');
+      if(e.target.checked) createSparkle(e.clientX, e.clientY);
+    };
+
+    render();
+
+    
+    document.getElementById('contactForm').onsubmit = (e) => {
+      e.preventDefault();
+      const status = document.getElementById('formStatus');
+      const name = document.getElementById('userName').value;
+      
+      if(name.length < 2) {
+        status.innerText = "Имя слишком короткое, милая! 🎀";
+        status.style.color = "orange";
+      } else {
+        status.innerText = `Ура, ${name}! Сообщение отправлено! 🚀`;
+        status.style.color = "var(--accent)";
+        e.target.reset();
+      }
+    };
+  </script>
+</body>
+</html>
